@@ -85,21 +85,4 @@ class AuthorRepository(private val dsl: DSLContext) {
             }
     }
 
-    fun findAuthorsByBookId(bookId: Long): List<AuthorResponse> {
-        return dsl.select(
-            AUTHORS.ID,
-            AUTHORS.NAME,
-            AUTHORS.BIRTH_DATE
-        )
-            .from(AUTHORS)
-            .join(BOOK_AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
-            .where(BOOK_AUTHORS.BOOK_ID.eq(bookId))
-            .fetch { record ->
-                AuthorResponse(
-                    id = record[AUTHORS.ID]!!,
-                    name = record[AUTHORS.NAME]!!,
-                    birthDate = record[AUTHORS.BIRTH_DATE]!!
-                )
-            }
-    }
 }
