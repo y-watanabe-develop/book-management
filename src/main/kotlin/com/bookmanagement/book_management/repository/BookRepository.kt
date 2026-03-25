@@ -64,7 +64,7 @@ class BookRepository(private val dsl: DSLContext) {
         if (updated == 0) {
             val exists = dsl.fetchExists(dsl.selectFrom(BOOKS).where(BOOKS.ID.eq(id)))
             if (!exists) throw NoSuchElementException("Book not found: $id")
-            throw IllegalStateException("Already published book cannot be unpublished")
+            throw IllegalStateException("Book is already published")
         }
 
         return findById(id)!!
