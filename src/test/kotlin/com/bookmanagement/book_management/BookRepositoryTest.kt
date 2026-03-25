@@ -49,6 +49,19 @@ class BookRepositoryTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `複数著者で書籍を登録できる`() {
+        val author1 = createTestAuthor()
+        val author2 = authorRepository.create(
+            AuthorRequest(name = "テスト著者2", birthDate = LocalDate.of(1985, 6, 15))
+        )
+        val response = bookRepository.create(
+            BookRequest(title = "共著書籍", price = 1500, authorIds = listOf(author1.id, author2.id))
+        )
+
+        assertEquals(2, response.authors.size)
+    }
+
+    @Test
     fun `書籍を正常に更新できる`() {
         val author = createTestAuthor()
         val created = bookRepository.create(
