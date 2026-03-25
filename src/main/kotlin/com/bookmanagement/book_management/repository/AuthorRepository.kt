@@ -46,6 +46,9 @@ class AuthorRepository(private val dsl: DSLContext) {
     }
 
     fun findBooksByAuthorId(authorId: Long): List<BookResponse> {
+        val exists = dsl.fetchExists(dsl.selectFrom(AUTHORS).where(AUTHORS.ID.eq(authorId)))
+        if (!exists) throw NoSuchElementException("Author not found: $authorId")
+
         val records = dsl.select(
             BOOKS.ID,
             BOOKS.TITLE,
