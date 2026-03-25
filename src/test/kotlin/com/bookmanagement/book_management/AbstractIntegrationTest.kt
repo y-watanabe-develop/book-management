@@ -11,7 +11,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 abstract class AbstractIntegrationTest {
 
     companion object {
-        private val postgres = PostgreSQLContainer("postgres:latest")
+        private val postgres = PostgreSQLContainer("postgres:17")
             .withDatabaseName("mydatabase")
             .withUsername("myuser")
             .withPassword("secret")
