@@ -62,6 +62,37 @@ class AuthorRepositoryTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `著者一覧を取得できる`() {
+        authorRepository.create(
+            AuthorRequest(name = "テスト著者", birthDate = LocalDate.of(1990, 1, 1))
+        )
+
+        val authors = authorRepository.findAll()
+
+        assertEquals(1, authors.size)
+        assertEquals("テスト著者", authors.first().name)
+    }
+
+    @Test
+    fun `著者を1件取得できる`() {
+        val created = authorRepository.create(
+            AuthorRequest(name = "テスト著者", birthDate = LocalDate.of(1990, 1, 1))
+        )
+
+        val found = authorRepository.findById(created.id)
+
+        assertEquals("テスト著者", found.name)
+        assertEquals(LocalDate.of(1990, 1, 1), found.birthDate)
+    }
+
+    @Test
+    fun `存在しない著者IDで1件取得するとNoSuchElementExceptionが発生する`() {
+        assertThrows(NoSuchElementException::class.java) {
+            authorRepository.findById(999L)
+        }
+    }
+
+    @Test
     fun `著者に紐づく書籍一覧を取得できる`() {
         val author = authorRepository.create(
             AuthorRequest(name = "テスト著者", birthDate = LocalDate.of(1990, 1, 1))

@@ -102,6 +102,19 @@ class BookRepositoryTest : AbstractIntegrationTest() {
     }
 
     @Test
+    fun `書籍一覧を取得できる`() {
+        val author = createTestAuthor()
+        bookRepository.create(
+            BookRequest(title = "テスト書籍", price = 1000, authorIds = listOf(author.id))
+        )
+
+        val books = bookRepository.findAll()
+
+        assertEquals(1, books.size)
+        assertEquals("テスト書籍", books.first().title)
+    }
+
+    @Test
     fun `出版済みの書籍を再度出版しようとするとIllegalStateExceptionが発生する`() {
         val author = createTestAuthor()
         val created = bookRepository.create(
