@@ -17,6 +17,7 @@ class BookService(private val bookRepository: BookRepository) {
     fun update(id: Long, request: BookRequest): BookResponse =
         bookRepository.update(id, request)
 
+    @Transactional
     fun publish(id: Long): BookResponse =
         bookRepository.publish(id)
 }
