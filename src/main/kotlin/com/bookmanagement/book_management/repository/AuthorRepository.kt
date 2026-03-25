@@ -16,7 +16,7 @@ class AuthorRepository(private val dsl: DSLContext) {
     fun create(request: AuthorRequest): AuthorResponse {
         val record = dsl.insertInto(AUTHORS)
             .set(AUTHORS.NAME, request.name)
-            .set(AUTHORS.BIRTH_DATE, request.birthDate!!)
+            .set(AUTHORS.BIRTH_DATE, request.birthDate)
             .returning()
             .fetchOne()!!
 
@@ -30,7 +30,7 @@ class AuthorRepository(private val dsl: DSLContext) {
     fun update(id: Long, request: AuthorRequest): AuthorResponse {
         val record = dsl.update(AUTHORS)
             .set(AUTHORS.NAME, request.name)
-            .set(AUTHORS.BIRTH_DATE, request.birthDate!!)
+            .set(AUTHORS.BIRTH_DATE, request.birthDate)
             .where(AUTHORS.ID.eq(id))
             .returning()
             .fetchOne()
