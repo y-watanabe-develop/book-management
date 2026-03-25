@@ -33,6 +33,12 @@ cd book-management
 ./gradlew jooqCodegen
 ```
 
+※ 生成済みのコードは `.gitignore` で除外されているため、初回起動前に実行が必要です。実行にはDockerによるPostgreSQLの起動が必要です。
+
+```bash
+docker compose up -d
+```
+
 3. アプリケーション起動
 
 ```bash
