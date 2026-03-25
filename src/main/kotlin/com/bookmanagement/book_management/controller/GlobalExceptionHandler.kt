@@ -1,5 +1,6 @@
 package com.bookmanagement.book_management.controller
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -18,6 +19,11 @@ class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleConflict(e: IllegalStateException): Map<String, String?> =
         mapOf("error" to e.message)
+
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleDataIntegrity(e: DataIntegrityViolationException): Map<String, String?> =
+        mapOf("error" to "Invalid reference: related resource does not exist")
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
