@@ -27,7 +27,8 @@ class BookRepository(private val dsl: DSLContext) {
                 .execute()
         }
 
-        return findById(bookRecord.id!!)!!
+        val bookId = requireNotNull(bookRecord.id) { "Book id must not be null" }
+        return requireNotNull(findById(bookId)) { "Book not found after insert" }
     }
 
     fun update(id: Long, request: BookRequest): BookResponse {
@@ -50,7 +51,7 @@ class BookRepository(private val dsl: DSLContext) {
                 .execute()
         }
 
-        return findById(id)!!
+        return requireNotNull(findById(id)) { "Book not found after update" }
     }
 
     fun publish(id: Long): BookResponse {
@@ -67,7 +68,7 @@ class BookRepository(private val dsl: DSLContext) {
             throw IllegalStateException("Book is already published")
         }
 
-        return findById(id)!!
+        return requireNotNull(findById(id)) { "Book not found after publish" }
     }
 
     fun findById(id: Long): BookResponse? {
