@@ -14,11 +14,13 @@ import org.springframework.stereotype.Repository
 class BookRepository(private val dsl: DSLContext) {
 
     fun create(request: BookRequest): BookResponse {
-        val bookRecord = dsl.insertInto(BOOKS)
-            .set(BOOKS.TITLE, request.title)
-            .set(BOOKS.PRICE, request.price)
-            .returning()
-            .fetchOne()!!
+        val bookRecord = requireNotNull(
+            dsl.insertInto(BOOKS)
+                .set(BOOKS.TITLE, request.title)
+                .set(BOOKS.PRICE, request.price)
+                .returning()
+                .fetchOne()
+        ) { "Book record must not be null after insert" }
 
         request.authorIds.forEach { authorId ->
             dsl.insertInto(BOOK_AUTHORS)
@@ -79,10 +81,10 @@ class BookRepository(private val dsl: DSLContext) {
             .fetchOne()
             ?.let { record ->
                 BookResponse(
-                    id = record.id!!,
-                    title = record.title!!,
-                    price = record.price!!,
-                    publishStatus = PublishStatus.valueOf(record.publishStatus!!),
+                    id = requireNotNull(record.id) { "Book id must not be null" },
+                    title = requireNotNull(record.title) { "Book title must not be null" },
+                    price = requireNotNull(record.price) { "Book price must not be null" },
+                    publishStatus = PublishStatus.valueOf(requireNotNull(record.publishStatus) { "Book publishStatus must not be null" }),
                     authors = authors
                 )
             }
@@ -95,9 +97,9 @@ class BookRepository(private val dsl: DSLContext) {
             .where(BOOK_AUTHORS.BOOK_ID.eq(bookId))
             .fetch { record ->
                 AuthorResponse(
-                    id = record[AUTHORS.ID]!!,
-                    name = record[AUTHORS.NAME]!!,
-                    birthDate = record[AUTHORS.BIRTH_DATE]!!
+                    id = requireNotNull(record[AUTHORS.ID]) { "Author id must not be null" },
+                    name = requireNotNull(record[AUTHORS.NAME]) { "Author name must not be null" },
+                    birthDate = requireNotNull(record[AUTHORS.BIRTH_DATE]) { "Author birthDate must not be null" }
                 )
             }
     }
