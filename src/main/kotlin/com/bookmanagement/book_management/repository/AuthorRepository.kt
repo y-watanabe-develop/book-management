@@ -45,6 +45,29 @@ class AuthorRepository(private val dsl: DSLContext) {
         )
     }
 
+    fun findAll(): List<AuthorResponse> =
+        dsl.selectFrom(AUTHORS)
+            .fetch { record ->
+                AuthorResponse(
+                    id = requireNotNull(record.id) { "Author id must not be null" },
+                    name = requireNotNull(record.name) { "Author name must not be null" },
+                    birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+                )
+            }
+
+    fun findById(id: Long): AuthorResponse {
+        val record = dsl.selectFrom(AUTHORS)
+            .where(AUTHORS.ID.eq(id))
+            .fetchOne()
+            ?: throw NoSuchElementException("Author not found: $id")
+
+        return AuthorResponse(
+            id = requireNotNull(record.id) { "Author id must not be null" },
+            name = requireNotNull(record.name) { "Author name must not be null" },
+            birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+        )
+    }
+
     fun findBooksByAuthorId(authorId: Long): List<BookResponse> {
         val exists = dsl.fetchExists(dsl.selectFrom(AUTHORS).where(AUTHORS.ID.eq(authorId)))
         if (!exists) throw NoSuchElementException("Author not found: $authorId")

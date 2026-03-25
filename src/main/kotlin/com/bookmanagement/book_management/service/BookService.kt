@@ -9,6 +9,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class BookService(private val bookRepository: BookRepository) {
 
+    @Transactional(readOnly = true)
+    fun findAll(): List<BookResponse> =
+        bookRepository.findAll()
+
+    @Transactional(readOnly = true)
+    fun findById(id: Long): BookResponse =
+        bookRepository.findById(id) ?: throw NoSuchElementException("Book not found: $id")
+
     @Transactional
     fun create(request: BookRequest): BookResponse =
         bookRepository.create(request)

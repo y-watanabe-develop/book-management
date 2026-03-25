@@ -12,6 +12,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/authors")
 class AuthorController(private val authorService: AuthorService) {
 
+    @GetMapping
+    fun findAll(): List<AuthorResponse> =
+        authorService.findAll()
+
+    @GetMapping("/{id}")
+    fun findById(@PathVariable id: Long): AuthorResponse =
+        authorService.findById(id)
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody @Valid request: AuthorRequest): AuthorResponse =

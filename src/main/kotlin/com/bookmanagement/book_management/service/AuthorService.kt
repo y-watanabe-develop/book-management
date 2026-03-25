@@ -10,6 +10,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class AuthorService(private val authorRepository: AuthorRepository) {
 
+    @Transactional(readOnly = true)
+    fun findAll(): List<AuthorResponse> =
+        authorRepository.findAll()
+
+    @Transactional(readOnly = true)
+    fun findById(id: Long): AuthorResponse =
+        authorRepository.findById(id)
+
     @Transactional
     fun create(request: AuthorRequest): AuthorResponse =
         authorRepository.create(request)
