@@ -18,6 +18,7 @@ class AuthorService(private val authorRepository: AuthorRepository) {
     fun update(id: Long, request: AuthorRequest): AuthorResponse =
         authorRepository.update(id, request)
 
+    @Transactional(readOnly = true)
     fun getBooksByAuthor(id: Long): List<BookResponse> =
         authorRepository.findBooksByAuthorId(id)
 }
