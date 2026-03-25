@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import java.time.LocalDate
 
 class BookRepositoryTest : AbstractIntegrationTest() {
@@ -36,6 +37,15 @@ class BookRepositoryTest : AbstractIntegrationTest() {
         assertEquals("テスト書籍", response.title)
         assertEquals(1000, response.price)
         assertEquals(1, response.authors.size)
+    }
+
+    @Test
+    fun `存在しない著者IDで書籍を登録するとDataIntegrityViolationExceptionが発生する`() {
+        assertThrows(DataIntegrityViolationException::class.java) {
+            bookRepository.create(
+                BookRequest(title = "テスト書籍", price = 1000, authorIds = listOf(999L))
+            )
+        }
     }
 
     @Test
