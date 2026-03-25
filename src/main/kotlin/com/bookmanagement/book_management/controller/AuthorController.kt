@@ -2,6 +2,7 @@ package com.bookmanagement.book_management.controller
 
 import com.bookmanagement.book_management.dto.AuthorRequest
 import com.bookmanagement.book_management.dto.AuthorResponse
+import com.bookmanagement.book_management.dto.BookResponse
 import com.bookmanagement.book_management.service.AuthorService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -21,6 +22,6 @@ class AuthorController(private val authorService: AuthorService) {
         authorService.update(id, request)
 
     @GetMapping("/{id}/books")
-    fun getBooksByAuthor(@PathVariable id: Long) =
+    fun getBooksByAuthor(@PathVariable id: Long): List<BookResponse> =
         authorService.getBooksByAuthor(id)
 }
