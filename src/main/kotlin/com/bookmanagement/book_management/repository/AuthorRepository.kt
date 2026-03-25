@@ -44,23 +44,43 @@ class AuthorRepository(private val dsl: DSLContext) {
     }
 
     fun findBooksByAuthorId(authorId: Long): List<BookResponse> {
-        return dsl.select(
+        val records = dsl.select(
             BOOKS.ID,
             BOOKS.TITLE,
             BOOKS.PRICE,
-            BOOKS.PUBLISH_STATUS
+            BOOKS.PUBLISH_STATUS,
+            AUTHORS.ID,
+            AUTHORS.NAME,
+            AUTHORS.BIRTH_DATE
         )
             .from(BOOKS)
             .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
-            .where(BOOK_AUTHORS.AUTHOR_ID.eq(authorId))
-            .fetch { record ->
+            .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
+            .where(
+                BOOKS.ID.`in`(
+                    dsl.select(BOOK_AUTHORS.BOOK_ID)
+                        .from(BOOK_AUTHORS)
+                        .where(BOOK_AUTHORS.AUTHOR_ID.eq(authorId))
+                )
+            )
+            .fetch()
+
+        return records
+            .groupBy { it[BOOKS.ID] }
+            .map { (_, bookRecords) ->
+                val first = bookRecords.first()
                 BookResponse(
-                    id = record[BOOKS.ID]!!,
-                    title = record[BOOKS.TITLE]!!,
-                    price = record[BOOKS.PRICE]!!,
-                    publishStatus = PublishStatus.valueOf(record[BOOKS.PUBLISH_STATUS]!!),
-                    // TODO: 自己参照のため要リファクタリング
-                    authors = findAuthorsByBookId(record[BOOKS.ID]!!)
+                    id = first[BOOKS.ID]!!,
+                    title = first[BOOKS.TITLE]!!,
+                    price = first[BOOKS.PRICE]!!,
+                    publishStatus = PublishStatus.valueOf(first[BOOKS.PUBLISH_STATUS]!!),
+                    authors = bookRecords.map { record ->
+                        AuthorResponse(
+                            id = record[AUTHORS.ID]!!,
+                            name = record[AUTHORS.NAME]!!,
+                            birthDate = record[AUTHORS.BIRTH_DATE]!!
+                        )
+                    }
                 )
             }
     }
