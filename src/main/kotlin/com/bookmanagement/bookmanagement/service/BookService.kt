@@ -12,11 +12,11 @@ class BookService(private val bookRepository: BookRepository) {
 
     @Transactional(readOnly = true)
     fun findAll(): List<BookResponse> =
-        bookRepository.findAll()
+        bookRepository.findAllWithAuthors()
 
     @Transactional(readOnly = true)
     fun findById(id: Long): BookResponse =
-        bookRepository.findById(id) ?: throw NoSuchElementException("Book not found: $id")
+        bookRepository.findByIdWithAuthors(id) ?: throw NoSuchElementException("Book not found: $id")
 
     @Transactional
     fun create(request: BookRequest): BookResponse =
@@ -28,11 +28,11 @@ class BookService(private val bookRepository: BookRepository) {
 
     @Transactional
     fun publish(id: Long): BookResponse {
-        val book = bookRepository.findById(id) ?: throw NoSuchElementException("Book not found: $id")
+        val book = bookRepository.findByIdWithAuthors(id) ?: throw NoSuchElementException("Book not found: $id")
         if (book.publishStatus == PublishStatus.PUBLISHED) {
             throw IllegalStateException("Book is already published")
         }
         bookRepository.updatePublishStatus(id, PublishStatus.PUBLISHED)
-        return requireNotNull(bookRepository.findById(id)) { "Book not found after publish" }
+        return requireNotNull(bookRepository.findByIdWithAuthors(id)) { "Book not found after publish" }
     }
 }

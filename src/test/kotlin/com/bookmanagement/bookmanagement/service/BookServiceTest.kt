@@ -42,7 +42,7 @@ class BookServiceTest {
 
     @Test
     fun `未公開の書籍を出版済みに変更できる`() {
-        given(bookRepository.findById(1L))
+        given(bookRepository.findByIdWithAuthors(1L))
             .willReturn(unpublishedBook)
             .willReturn(publishedBook)
 
@@ -54,7 +54,7 @@ class BookServiceTest {
 
     @Test
     fun `存在しない書籍IDで出版するとNoSuchElementExceptionが発生する`() {
-        given(bookRepository.findById(999L)).willReturn(null)
+        given(bookRepository.findByIdWithAuthors(999L)).willReturn(null)
 
         assertThrows(NoSuchElementException::class.java) {
             bookService.publish(999L)
@@ -63,7 +63,7 @@ class BookServiceTest {
 
     @Test
     fun `出版済みの書籍を再出版するとIllegalStateExceptionが発生する`() {
-        given(bookRepository.findById(1L)).willReturn(publishedBook)
+        given(bookRepository.findByIdWithAuthors(1L)).willReturn(publishedBook)
 
         assertThrows(IllegalStateException::class.java) {
             bookService.publish(1L)

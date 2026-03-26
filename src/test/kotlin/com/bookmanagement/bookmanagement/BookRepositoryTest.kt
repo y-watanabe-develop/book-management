@@ -99,7 +99,7 @@ class BookRepositoryTest : AbstractIntegrationTest() {
 
         bookRepository.updatePublishStatus(created.id, PublishStatus.PUBLISHED)
 
-        val updated = bookRepository.findById(created.id)
+        val updated = bookRepository.findByIdWithAuthors(created.id)
         assertEquals(PublishStatus.PUBLISHED, updated?.publishStatus)
     }
 
@@ -110,7 +110,7 @@ class BookRepositoryTest : AbstractIntegrationTest() {
             BookRequest(title = "テスト書籍", price = 1000, authorIds = listOf(author.id))
         )
 
-        val books = bookRepository.findAll()
+        val books = bookRepository.findAllWithAuthors()
 
         assertEquals(1, books.size)
         assertEquals("テスト書籍", books.first().title)

@@ -30,7 +30,7 @@ class BookRepository(private val dsl: DSLContext) {
         }
 
         val bookId = requireNotNull(bookRecord.id) { "Book id must not be null" }
-        return requireNotNull(findById(bookId)) { "Book not found after insert" }
+        return requireNotNull(findByIdWithAuthors(bookId)) { "Book not found after insert" }
     }
 
     fun update(id: Long, request: BookRequest): BookResponse {
@@ -53,7 +53,7 @@ class BookRepository(private val dsl: DSLContext) {
                 .execute()
         }
 
-        return requireNotNull(findById(id)) { "Book not found after update" }
+        return requireNotNull(findByIdWithAuthors(id)) { "Book not found after update" }
     }
 
     fun updatePublishStatus(id: Long, status: PublishStatus) {
@@ -63,7 +63,7 @@ class BookRepository(private val dsl: DSLContext) {
             .execute()
     }
 
-    fun findAll(): List<BookResponse> {
+    fun findAllWithAuthors(): List<BookResponse> {
         val records = dsl.select(
             BOOKS.ID,
             BOOKS.TITLE,
@@ -98,34 +98,37 @@ class BookRepository(private val dsl: DSLContext) {
             }
     }
 
-    fun findById(id: Long): BookResponse? {
-        val authors = findAuthorsByBookId(id)
-
-        return dsl.selectFrom(BOOKS)
+    fun findByIdWithAuthors(id: Long): BookResponse? {
+        val records = dsl.select(
+            BOOKS.ID,
+            BOOKS.TITLE,
+            BOOKS.PRICE,
+            BOOKS.PUBLISH_STATUS,
+            AUTHORS.ID,
+            AUTHORS.NAME,
+            AUTHORS.BIRTH_DATE
+        )
+            .from(BOOKS)
+            .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
+            .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
             .where(BOOKS.ID.eq(id))
-            .fetchOne()
-            ?.let { record ->
-                BookResponse(
-                    id = requireNotNull(record.id) { "Book id must not be null" },
-                    title = requireNotNull(record.title) { "Book title must not be null" },
-                    price = requireNotNull(record.price) { "Book price must not be null" },
-                    publishStatus = PublishStatus.valueOf(requireNotNull(record.publishStatus) { "Book publishStatus must not be null" }),
-                    authors = authors
-                )
-            }
-    }
+            .fetch()
 
-    private fun findAuthorsByBookId(bookId: Long): List<AuthorResponse> {
-        return dsl.select(AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
-            .from(AUTHORS)
-            .join(BOOK_AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
-            .where(BOOK_AUTHORS.BOOK_ID.eq(bookId))
-            .fetch { record ->
+        if (records.isEmpty()) return null
+
+        val first = records.first()
+        return BookResponse(
+            id = requireNotNull(first[BOOKS.ID]) { "Book id must not be null" },
+            title = requireNotNull(first[BOOKS.TITLE]) { "Book title must not be null" },
+            price = requireNotNull(first[BOOKS.PRICE]) { "Book price must not be null" },
+            publishStatus = PublishStatus.valueOf(requireNotNull(first[BOOKS.PUBLISH_STATUS]) { "Book publishStatus must not be null" }),
+            authors = records.map { record ->
                 AuthorResponse(
                     id = requireNotNull(record[AUTHORS.ID]) { "Author id must not be null" },
                     name = requireNotNull(record[AUTHORS.NAME]) { "Author name must not be null" },
                     birthDate = requireNotNull(record[AUTHORS.BIRTH_DATE]) { "Author birthDate must not be null" }
                 )
             }
+        )
     }
 }
