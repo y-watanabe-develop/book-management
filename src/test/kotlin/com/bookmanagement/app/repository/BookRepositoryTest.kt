@@ -1,10 +1,9 @@
-package com.bookmanagement.app
+package com.bookmanagement.app.repository
 
+import com.bookmanagement.app.AbstractIntegrationTest
 import com.bookmanagement.app.domain.enums.PublishStatus
 import com.bookmanagement.app.dto.AuthorRequest
 import com.bookmanagement.app.dto.BookRequest
-import com.bookmanagement.app.repository.AuthorRepository
-import com.bookmanagement.app.repository.BookRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
