@@ -44,9 +44,9 @@ jooq {
     configuration {
         jdbc {
             driver = 'org.postgresql.Driver'
-            url = 'jdbc:postgresql://localhost:5432/mydatabase'
-            user = 'myuser'
-            password = 'secret'
+            url = System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/mydatabase'
+            user = System.getenv('DB_USER') ?: 'myuser'
+            password = System.getenv('DB_PASSWORD') ?: 'secret'
         }
         generator {
             database {
