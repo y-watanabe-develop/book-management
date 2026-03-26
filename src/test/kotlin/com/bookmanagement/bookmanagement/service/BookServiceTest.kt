@@ -1,9 +1,9 @@
-package com.bookmanagement.book_management.service
+package com.bookmanagement.bookmanagement.service
 
-import com.bookmanagement.book_management.domain.enums.PublishStatus
-import com.bookmanagement.book_management.dto.AuthorResponse
-import com.bookmanagement.book_management.dto.BookResponse
-import com.bookmanagement.book_management.repository.BookRepository
+import com.bookmanagement.bookmanagement.domain.enums.PublishStatus
+import com.bookmanagement.bookmanagement.dto.AuthorResponse
+import com.bookmanagement.bookmanagement.dto.BookResponse
+import com.bookmanagement.bookmanagement.repository.BookRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

@@ -1,9 +1,9 @@
-package com.bookmanagement.book_management.repository
+package com.bookmanagement.bookmanagement.repository
 
-import com.bookmanagement.book_management.domain.enums.PublishStatus
-import com.bookmanagement.book_management.dto.AuthorResponse
-import com.bookmanagement.book_management.dto.BookRequest
-import com.bookmanagement.book_management.dto.BookResponse
+import com.bookmanagement.bookmanagement.domain.enums.PublishStatus
+import com.bookmanagement.bookmanagement.dto.AuthorResponse
+import com.bookmanagement.bookmanagement.dto.BookRequest
+import com.bookmanagement.bookmanagement.dto.BookResponse
 import com.bookmanagement.infrastructure.jooq.tables.Authors.AUTHORS
 import com.bookmanagement.infrastructure.jooq.tables.BookAuthors.BOOK_AUTHORS
 import com.bookmanagement.infrastructure.jooq.tables.Books.BOOKS

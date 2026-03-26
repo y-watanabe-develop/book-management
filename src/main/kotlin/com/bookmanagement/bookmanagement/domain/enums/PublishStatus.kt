@@ -1,4 +1,4 @@
-package com.bookmanagement.book_management.domain.enums
+package com.bookmanagement.bookmanagement.domain.enums
 
 enum class PublishStatus {
     UNPUBLISHED,

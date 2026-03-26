@@ -1,9 +1,9 @@
-package com.bookmanagement.book_management.service
+package com.bookmanagement.bookmanagement.service
 
-import com.bookmanagement.book_management.domain.enums.PublishStatus
-import com.bookmanagement.book_management.dto.BookRequest
-import com.bookmanagement.book_management.dto.BookResponse
-import com.bookmanagement.book_management.repository.BookRepository
+import com.bookmanagement.bookmanagement.domain.enums.PublishStatus
+import com.bookmanagement.bookmanagement.dto.BookRequest
+import com.bookmanagement.bookmanagement.dto.BookResponse
+import com.bookmanagement.bookmanagement.repository.BookRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

@@ -1,4 +1,4 @@
-package com.bookmanagement.book_management.dto
+package com.bookmanagement.bookmanagement.dto
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.PastOrPresent

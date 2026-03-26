@@ -1,8 +1,8 @@
-package com.bookmanagement.book_management.controller
+package com.bookmanagement.bookmanagement.controller
 
-import com.bookmanagement.book_management.dto.BookRequest
-import com.bookmanagement.book_management.dto.BookResponse
-import com.bookmanagement.book_management.service.BookService
+import com.bookmanagement.bookmanagement.dto.BookRequest
+import com.bookmanagement.bookmanagement.dto.BookResponse
+import com.bookmanagement.bookmanagement.service.BookService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
