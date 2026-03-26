@@ -1,5 +1,6 @@
 package com.bookmanagement.book_management
 
+import com.bookmanagement.book_management.domain.enums.PublishStatus
 import com.bookmanagement.book_management.dto.AuthorRequest
 import com.bookmanagement.book_management.dto.BookRequest
 import com.bookmanagement.book_management.repository.AuthorRepository
@@ -90,15 +91,16 @@ class BookRepositoryTest : AbstractIntegrationTest() {
     }
 
     @Test
-    fun `書籍を出版済みに変更できる`() {
+    fun `書籍のステータスをPUBLISHEDに更新できる`() {
         val author = createTestAuthor()
         val created = bookRepository.create(
             BookRequest(title = "テスト書籍", price = 1000, authorIds = listOf(author.id))
         )
 
-        val published = bookRepository.publish(created.id)
+        bookRepository.updatePublishStatus(created.id, PublishStatus.PUBLISHED)
 
-        assertEquals("PUBLISHED", published.publishStatus.name)
+        val updated = bookRepository.findById(created.id)
+        assertEquals(PublishStatus.PUBLISHED, updated?.publishStatus)
     }
 
     @Test
@@ -114,16 +116,4 @@ class BookRepositoryTest : AbstractIntegrationTest() {
         assertEquals("テスト書籍", books.first().title)
     }
 
-    @Test
-    fun `出版済みの書籍を再度出版しようとするとIllegalStateExceptionが発生する`() {
-        val author = createTestAuthor()
-        val created = bookRepository.create(
-            BookRequest(title = "テスト書籍", price = 1000, authorIds = listOf(author.id))
-        )
-        bookRepository.publish(created.id)
-
-        assertThrows(IllegalStateException::class.java) {
-            bookRepository.publish(created.id)
-        }
-    }
 }

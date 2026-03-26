@@ -56,21 +56,11 @@ class BookRepository(private val dsl: DSLContext) {
         return requireNotNull(findById(id)) { "Book not found after update" }
     }
 
-    fun publish(id: Long): BookResponse {
-        val updated = dsl.update(BOOKS)
-            .set(BOOKS.PUBLISH_STATUS, PublishStatus.PUBLISHED.name)
+    fun updatePublishStatus(id: Long, status: PublishStatus) {
+        dsl.update(BOOKS)
+            .set(BOOKS.PUBLISH_STATUS, status.name)
             .where(BOOKS.ID.eq(id))
-            .and(BOOKS.PUBLISH_STATUS.eq(PublishStatus.UNPUBLISHED.name))
             .execute()
-
-        // 出版済みの場合はUPDATE対象にならないためupdated == 0で検知
-        if (updated == 0) {
-            val exists = dsl.fetchExists(dsl.selectFrom(BOOKS).where(BOOKS.ID.eq(id)))
-            if (!exists) throw NoSuchElementException("Book not found: $id")
-            throw IllegalStateException("Book is already published")
-        }
-
-        return requireNotNull(findById(id)) { "Book not found after publish" }
     }
 
     fun findAll(): List<BookResponse> {

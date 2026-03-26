@@ -1,5 +1,6 @@
 package com.bookmanagement.book_management.service
 
+import com.bookmanagement.book_management.domain.enums.PublishStatus
 import com.bookmanagement.book_management.dto.BookRequest
 import com.bookmanagement.book_management.dto.BookResponse
 import com.bookmanagement.book_management.repository.BookRepository
@@ -26,6 +27,12 @@ class BookService(private val bookRepository: BookRepository) {
         bookRepository.update(id, request)
 
     @Transactional
-    fun publish(id: Long): BookResponse =
-        bookRepository.publish(id)
+    fun publish(id: Long): BookResponse {
+        val book = bookRepository.findById(id) ?: throw NoSuchElementException("Book not found: $id")
+        if (book.publishStatus == PublishStatus.PUBLISHED) {
+            throw IllegalStateException("Book is already published")
+        }
+        bookRepository.updatePublishStatus(id, PublishStatus.PUBLISHED)
+        return requireNotNull(bookRepository.findById(id)) { "Book not found after publish" }
+    }
 }
