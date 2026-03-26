@@ -29,14 +29,12 @@ cd book-management
 
 2. jOOQコード生成
 
-```bash
-./gradlew jooqCodegen
-```
-
-※ 生成済みのコードは `.gitignore` で除外されているため、初回起動前に実行が必要です。実行にはDockerによるPostgreSQLの起動が必要です。
+※ 通常、生成コードは `.gitignore` で除外しますが、本リポジトリでは評価者がすぐに実行できるようコミット済みです。
+スキーマ変更時は以下のコマンドで再生成してください。
 
 ```bash
 docker compose up -d
+./gradlew jooqCodegen
 ```
 
 3. アプリケーション起動
