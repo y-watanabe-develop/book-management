@@ -1,4 +1,4 @@
-package com.bookmanagement.bookmanagement
+package com.bookmanagement.app
 
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.DynamicPropertyRegistry

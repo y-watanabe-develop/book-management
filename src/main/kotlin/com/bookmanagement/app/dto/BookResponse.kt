@@ -1,6 +1,6 @@
-package com.bookmanagement.bookmanagement.dto
+package com.bookmanagement.app.dto
 
-import com.bookmanagement.bookmanagement.domain.enums.PublishStatus
+import com.bookmanagement.app.domain.enums.PublishStatus
 
 data class BookResponse(
     val id: Long,

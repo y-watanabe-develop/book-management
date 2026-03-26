@@ -1,4 +1,4 @@
-package com.bookmanagement.bookmanagement.controller
+package com.bookmanagement.app.controller
 
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus

@@ -1,9 +1,9 @@
-package com.bookmanagement.bookmanagement.service
+package com.bookmanagement.app.service
 
-import com.bookmanagement.bookmanagement.dto.AuthorRequest
-import com.bookmanagement.bookmanagement.dto.AuthorResponse
-import com.bookmanagement.bookmanagement.dto.BookResponse
-import com.bookmanagement.bookmanagement.repository.AuthorRepository
+import com.bookmanagement.app.dto.AuthorRequest
+import com.bookmanagement.app.dto.AuthorResponse
+import com.bookmanagement.app.dto.BookResponse
+import com.bookmanagement.app.repository.AuthorRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

@@ -1,4 +1,4 @@
-package com.bookmanagement.bookmanagement.dto
+package com.bookmanagement.app.dto
 
 import java.time.LocalDate
 

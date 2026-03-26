@@ -1,10 +1,10 @@
-package com.bookmanagement.bookmanagement.controller
+package com.bookmanagement.app.controller
 
-import com.bookmanagement.bookmanagement.domain.enums.PublishStatus
-import com.bookmanagement.bookmanagement.dto.AuthorResponse
-import com.bookmanagement.bookmanagement.dto.BookRequest
-import com.bookmanagement.bookmanagement.dto.BookResponse
-import com.bookmanagement.bookmanagement.service.BookService
+import com.bookmanagement.app.domain.enums.PublishStatus
+import com.bookmanagement.app.dto.AuthorResponse
+import com.bookmanagement.app.dto.BookRequest
+import com.bookmanagement.app.dto.BookResponse
+import com.bookmanagement.app.service.BookService
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

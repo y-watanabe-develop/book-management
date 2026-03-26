@@ -1,4 +1,4 @@
-package com.bookmanagement.bookmanagement
+package com.bookmanagement.app
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

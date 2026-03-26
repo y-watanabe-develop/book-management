@@ -1,4 +1,4 @@
-package com.bookmanagement.bookmanagement.dto
+package com.bookmanagement.app.dto
 
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
