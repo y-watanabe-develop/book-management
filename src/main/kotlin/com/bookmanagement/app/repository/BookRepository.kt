@@ -5,9 +5,10 @@ import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookRequest
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.infrastructure.jooq.tables.references.AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
 import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -60,23 +61,47 @@ class BookRepository(private val dsl: DSLContext) {
             .execute()
     }
 
-    fun findAllWithAuthors(): List<BookResponse> {
-        val records = dsl.select(
-            BOOKS.ID,
-            BOOKS.TITLE,
-            BOOKS.PRICE,
-            BOOKS.PUBLISH_STATUS,
-            AUTHORS.ID,
-            AUTHORS.NAME,
-            AUTHORS.BIRTH_DATE
-        )
+    fun findAllWithAuthors(): List<BookResponse> =
+        dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
             .from(BOOKS)
             .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
             .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
             .fetch()
+            .toBookResponses()
 
-        return records
-            .groupBy { it[BOOKS.ID] }
+    fun findByIdWithAuthors(id: Long): BookResponse? {
+        val records = dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+            .from(BOOKS)
+            .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
+            .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
+            .where(BOOKS.ID.eq(id))
+            .fetch()
+
+        if (records.isEmpty()) return null
+        return records.toBookResponses().first()
+    }
+
+    fun findByAuthorId(authorId: Long): List<BookResponse> {
+        val exists = dsl.fetchExists(dsl.selectFrom(AUTHORS).where(AUTHORS.ID.eq(authorId)))
+        if (!exists) throw NoSuchElementException("Author not found: $authorId")
+
+        return dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+            .from(BOOKS)
+            .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
+            .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
+            .where(
+                BOOKS.ID.`in`(
+                    dsl.select(BOOK_AUTHORS.BOOK_ID)
+                        .from(BOOK_AUTHORS)
+                        .where(BOOK_AUTHORS.AUTHOR_ID.eq(authorId))
+                )
+            )
+            .fetch()
+            .toBookResponses()
+    }
+
+    private fun List<Record>.toBookResponses(): List<BookResponse> =
+        groupBy { it[BOOKS.ID] }
             .map { (_, bookRecords) ->
                 val first = bookRecords.first()
                 BookResponse(
@@ -93,39 +118,4 @@ class BookRepository(private val dsl: DSLContext) {
                     }
                 )
             }
-    }
-
-    fun findByIdWithAuthors(id: Long): BookResponse? {
-        val records = dsl.select(
-            BOOKS.ID,
-            BOOKS.TITLE,
-            BOOKS.PRICE,
-            BOOKS.PUBLISH_STATUS,
-            AUTHORS.ID,
-            AUTHORS.NAME,
-            AUTHORS.BIRTH_DATE
-        )
-            .from(BOOKS)
-            .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
-            .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
-            .where(BOOKS.ID.eq(id))
-            .fetch()
-
-        if (records.isEmpty()) return null
-
-        val first = records.first()
-        return BookResponse(
-            id = first[BOOKS.ID]!!,
-            title = first[BOOKS.TITLE]!!,
-            price = first[BOOKS.PRICE]!!,
-            publishStatus = PublishStatus.valueOf(first[BOOKS.PUBLISH_STATUS]!!),
-            authors = records.map { record ->
-                AuthorResponse(
-                    id = record[AUTHORS.ID]!!,
-                    name = record[AUTHORS.NAME]!!,
-                    birthDate = record[AUTHORS.BIRTH_DATE]!!
-                )
-            }
-        )
-    }
 }

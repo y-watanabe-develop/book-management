@@ -5,6 +5,7 @@ import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.app.domain.enums.PublishStatus
 import com.bookmanagement.app.repository.AuthorRepository
+import com.bookmanagement.app.repository.BookRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,6 +21,9 @@ class AuthorServiceTest {
 
     @Mock
     private lateinit var authorRepository: AuthorRepository
+
+    @Mock
+    private lateinit var bookRepository: BookRepository
 
     @InjectMocks
     private lateinit var authorService: AuthorService
@@ -83,7 +87,7 @@ class AuthorServiceTest {
 
     @Test
     fun `著者に紐づく書籍一覧を取得できる`() {
-        given(authorRepository.findBooksByAuthorId(1L)).willReturn(listOf(sampleBook))
+        given(bookRepository.findByAuthorId(1L)).willReturn(listOf(sampleBook))
 
         val result = authorService.getBooksByAuthor(1L)
 

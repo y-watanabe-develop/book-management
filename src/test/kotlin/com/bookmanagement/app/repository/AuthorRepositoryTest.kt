@@ -104,7 +104,7 @@ class AuthorRepositoryTest : AbstractIntegrationTest() {
             )
         )
 
-        val books = authorRepository.findBooksByAuthorId(author.id)
+        val books = bookRepository.findByAuthorId(author.id)
 
         assertEquals(1, books.size)
         assertEquals("テスト書籍", books.first().title)

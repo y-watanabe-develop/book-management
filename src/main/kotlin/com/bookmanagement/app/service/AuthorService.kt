@@ -4,11 +4,15 @@ import com.bookmanagement.app.dto.AuthorRequest
 import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.app.repository.AuthorRepository
+import com.bookmanagement.app.repository.BookRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class AuthorService(private val authorRepository: AuthorRepository) {
+class AuthorService(
+    private val authorRepository: AuthorRepository,
+    private val bookRepository: BookRepository
+) {
 
     @Transactional(readOnly = true)
     fun findAll(): List<AuthorResponse> =
@@ -28,5 +32,5 @@ class AuthorService(private val authorRepository: AuthorRepository) {
 
     @Transactional(readOnly = true)
     fun getBooksByAuthor(id: Long): List<BookResponse> =
-        authorRepository.findBooksByAuthorId(id)
+        bookRepository.findByAuthorId(id)
 }
