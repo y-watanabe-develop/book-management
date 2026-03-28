@@ -7,6 +7,7 @@ import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.app.repository.AuthorRepository
 import com.bookmanagement.app.repository.BookRepository
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
@@ -63,6 +64,15 @@ class AuthorServiceTest {
         val result = authorService.findById(1L)
 
         assertEquals(sampleAuthor, result)
+    }
+
+    @Test
+    fun `存在しない著者IDで取得するとNoSuchElementExceptionが発生する`() {
+        given(authorRepository.findById(999L)).willThrow(NoSuchElementException("Author not found: 999"))
+
+        assertThrows(NoSuchElementException::class.java) {
+            authorService.findById(999L)
+        }
     }
 
     @Test
