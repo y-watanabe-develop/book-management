@@ -180,6 +180,16 @@ class BookControllerTest {
     }
 
     @Test
+    fun `リクエストボディが不正な場合400が返る`() {
+        mockMvc.post("/api/books") {
+            contentType = MediaType.APPLICATION_JSON
+            content = """{"title": null, "price": 1000, "authorIds": [1]}"""
+        }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    @Test
     fun `出版済みを再出版すると409が返る`() {
         given(bookService.publish(1L)).willThrow(IllegalStateException("Book is already published"))
 
