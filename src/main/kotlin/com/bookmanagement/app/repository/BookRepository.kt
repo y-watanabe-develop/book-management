@@ -5,8 +5,8 @@ import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookRequest
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.infrastructure.jooq.tables.references.AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
@@ -14,13 +14,11 @@ import org.springframework.stereotype.Repository
 class BookRepository(private val dsl: DSLContext) {
 
     fun create(request: BookRequest): BookResponse {
-        val bookRecord = requireNotNull(
-            dsl.insertInto(BOOKS)
-                .set(BOOKS.TITLE, request.title)
-                .set(BOOKS.PRICE, request.price)
-                .returning()
-                .fetchOne()
-        ) { "Book record must not be null after insert" }
+        val bookRecord = dsl.insertInto(BOOKS)
+            .set(BOOKS.TITLE, request.title)
+            .set(BOOKS.PRICE, request.price)
+            .returning()
+            .fetchOne()!!
 
         request.authorIds.forEach { authorId ->
             dsl.insertInto(BOOK_AUTHORS)
@@ -29,8 +27,7 @@ class BookRepository(private val dsl: DSLContext) {
                 .execute()
         }
 
-        val bookId = requireNotNull(bookRecord.id) { "Book id must not be null" }
-        return requireNotNull(findByIdWithAuthors(bookId)) { "Book not found after insert" }
+        return findByIdWithAuthors(bookRecord.id!!)!!
     }
 
     fun update(id: Long, request: BookRequest): BookResponse {
@@ -53,7 +50,7 @@ class BookRepository(private val dsl: DSLContext) {
                 .execute()
         }
 
-        return requireNotNull(findByIdWithAuthors(id)) { "Book not found after update" }
+        return findByIdWithAuthors(id)!!
     }
 
     fun updatePublishStatus(id: Long, status: PublishStatus) {
@@ -83,15 +80,15 @@ class BookRepository(private val dsl: DSLContext) {
             .map { (_, bookRecords) ->
                 val first = bookRecords.first()
                 BookResponse(
-                    id = requireNotNull(first[BOOKS.ID]) { "Book id must not be null" },
-                    title = requireNotNull(first[BOOKS.TITLE]) { "Book title must not be null" },
-                    price = requireNotNull(first[BOOKS.PRICE]) { "Book price must not be null" },
-                    publishStatus = PublishStatus.valueOf(requireNotNull(first[BOOKS.PUBLISH_STATUS]) { "Book publishStatus must not be null" }),
+                    id = first[BOOKS.ID]!!,
+                    title = first[BOOKS.TITLE]!!,
+                    price = first[BOOKS.PRICE]!!,
+                    publishStatus = PublishStatus.valueOf(first[BOOKS.PUBLISH_STATUS]!!),
                     authors = bookRecords.map { record ->
                         AuthorResponse(
-                            id = requireNotNull(record[AUTHORS.ID]) { "Author id must not be null" },
-                            name = requireNotNull(record[AUTHORS.NAME]) { "Author name must not be null" },
-                            birthDate = requireNotNull(record[AUTHORS.BIRTH_DATE]) { "Author birthDate must not be null" }
+                            id = record[AUTHORS.ID]!!,
+                            name = record[AUTHORS.NAME]!!,
+                            birthDate = record[AUTHORS.BIRTH_DATE]!!
                         )
                     }
                 )
@@ -118,15 +115,15 @@ class BookRepository(private val dsl: DSLContext) {
 
         val first = records.first()
         return BookResponse(
-            id = requireNotNull(first[BOOKS.ID]) { "Book id must not be null" },
-            title = requireNotNull(first[BOOKS.TITLE]) { "Book title must not be null" },
-            price = requireNotNull(first[BOOKS.PRICE]) { "Book price must not be null" },
-            publishStatus = PublishStatus.valueOf(requireNotNull(first[BOOKS.PUBLISH_STATUS]) { "Book publishStatus must not be null" }),
+            id = first[BOOKS.ID]!!,
+            title = first[BOOKS.TITLE]!!,
+            price = first[BOOKS.PRICE]!!,
+            publishStatus = PublishStatus.valueOf(first[BOOKS.PUBLISH_STATUS]!!),
             authors = records.map { record ->
                 AuthorResponse(
-                    id = requireNotNull(record[AUTHORS.ID]) { "Author id must not be null" },
-                    name = requireNotNull(record[AUTHORS.NAME]) { "Author name must not be null" },
-                    birthDate = requireNotNull(record[AUTHORS.BIRTH_DATE]) { "Author birthDate must not be null" }
+                    id = record[AUTHORS.ID]!!,
+                    name = record[AUTHORS.NAME]!!,
+                    birthDate = record[AUTHORS.BIRTH_DATE]!!
                 )
             }
         )

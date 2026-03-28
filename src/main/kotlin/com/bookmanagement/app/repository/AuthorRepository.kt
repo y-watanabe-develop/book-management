@@ -5,8 +5,8 @@ import com.bookmanagement.app.dto.AuthorRequest
 import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.infrastructure.jooq.tables.references.AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
@@ -14,18 +14,16 @@ import org.springframework.stereotype.Repository
 class AuthorRepository(private val dsl: DSLContext) {
 
     fun create(request: AuthorRequest): AuthorResponse {
-        val record = requireNotNull(
-            dsl.insertInto(AUTHORS)
-                .set(AUTHORS.NAME, request.name)
-                .set(AUTHORS.BIRTH_DATE, request.birthDate)
-                .returning()
-                .fetchOne()
-        ) { "Author record must not be null after insert" }
+        val record = dsl.insertInto(AUTHORS)
+            .set(AUTHORS.NAME, request.name)
+            .set(AUTHORS.BIRTH_DATE, request.birthDate)
+            .returning()
+            .fetchOne()!!
 
         return AuthorResponse(
-            id = requireNotNull(record.id) { "Author id must not be null" },
-            name = requireNotNull(record.name) { "Author name must not be null" },
-            birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+            id = record.id!!,
+            name = record.name,
+            birthDate = record.birthDate
         )
     }
 
@@ -39,9 +37,9 @@ class AuthorRepository(private val dsl: DSLContext) {
             ?: throw NoSuchElementException("Author not found: $id")
 
         return AuthorResponse(
-            id = requireNotNull(record.id) { "Author id must not be null" },
-            name = requireNotNull(record.name) { "Author name must not be null" },
-            birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+            id = record.id!!,
+            name = record.name,
+            birthDate = record.birthDate
         )
     }
 
@@ -49,9 +47,9 @@ class AuthorRepository(private val dsl: DSLContext) {
         dsl.selectFrom(AUTHORS)
             .fetch { record ->
                 AuthorResponse(
-                    id = requireNotNull(record.id) { "Author id must not be null" },
-                    name = requireNotNull(record.name) { "Author name must not be null" },
-                    birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+                    id = record.id!!,
+                    name = record.name,
+                    birthDate = record.birthDate
                 )
             }
 
@@ -62,9 +60,9 @@ class AuthorRepository(private val dsl: DSLContext) {
             ?: throw NoSuchElementException("Author not found: $id")
 
         return AuthorResponse(
-            id = requireNotNull(record.id) { "Author id must not be null" },
-            name = requireNotNull(record.name) { "Author name must not be null" },
-            birthDate = requireNotNull(record.birthDate) { "Author birthDate must not be null" }
+            id = record.id!!,
+            name = record.name,
+            birthDate = record.birthDate
         )
     }
 
@@ -98,15 +96,15 @@ class AuthorRepository(private val dsl: DSLContext) {
             .map { (_, bookRecords) ->
                 val first = bookRecords.first()
                 BookResponse(
-                    id = requireNotNull(first[BOOKS.ID]) { "Book id must not be null" },
-                    title = requireNotNull(first[BOOKS.TITLE]) { "Book title must not be null" },
-                    price = requireNotNull(first[BOOKS.PRICE]) { "Book price must not be null" },
-                    publishStatus = PublishStatus.valueOf(requireNotNull(first[BOOKS.PUBLISH_STATUS]) { "Book publishStatus must not be null" }),
+                    id = first[BOOKS.ID]!!,
+                    title = first[BOOKS.TITLE]!!,
+                    price = first[BOOKS.PRICE]!!,
+                    publishStatus = PublishStatus.valueOf(first[BOOKS.PUBLISH_STATUS]!!),
                     authors = bookRecords.map { record ->
                         AuthorResponse(
-                            id = requireNotNull(record[AUTHORS.ID]) { "Author id must not be null" },
-                            name = requireNotNull(record[AUTHORS.NAME]) { "Author name must not be null" },
-                            birthDate = requireNotNull(record[AUTHORS.BIRTH_DATE]) { "Author birthDate must not be null" }
+                            id = record[AUTHORS.ID]!!,
+                            name = record[AUTHORS.NAME]!!,
+                            birthDate = record[AUTHORS.BIRTH_DATE]!!
                         )
                     }
                 )
