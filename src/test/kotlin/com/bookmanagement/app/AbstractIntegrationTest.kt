@@ -16,7 +16,7 @@ abstract class AbstractIntegrationTest {
             .withUsername("myuser")
             .withPassword("secret")
             .apply { start() }
- 
+
         @JvmStatic
         @DynamicPropertySource
         fun properties(registry: DynamicPropertyRegistry) {
