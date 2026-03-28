@@ -93,9 +93,7 @@ class BookServiceTest {
 
     @Test
     fun `未公開の書籍を出版済みに変更できる`() {
-        given(bookRepository.findByIdWithAuthors(1L))
-            .willReturn(unpublishedBook)
-            .willReturn(publishedBook)
+        given(bookRepository.findByIdWithAuthors(1L)).willReturn(unpublishedBook)
 
         val result = bookService.publish(1L)
 

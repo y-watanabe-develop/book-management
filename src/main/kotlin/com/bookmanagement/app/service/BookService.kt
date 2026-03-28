@@ -33,6 +33,6 @@ class BookService(private val bookRepository: BookRepository) {
             throw IllegalStateException("Book is already published")
         }
         bookRepository.updatePublishStatus(id, PublishStatus.PUBLISHED)
-        return requireNotNull(bookRepository.findByIdWithAuthors(id)) { "Book not found after publish" }
+        return book.copy(publishStatus = PublishStatus.PUBLISHED)
     }
 }
