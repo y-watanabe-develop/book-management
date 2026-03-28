@@ -27,6 +27,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
     implementation 'org.postgresql:postgresql'
     jooqCodegen 'org.postgresql:postgresql'
+    jooqCodegen 'org.jooq:jooq-codegen:3.19.18'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-jooq-test'
@@ -49,15 +50,16 @@ jooq {
             password = System.getenv('DB_PASSWORD') ?: 'secret'
         }
         generator {
+            name = 'org.jooq.codegen.KotlinGenerator'
             database {
                 name = 'org.jooq.meta.postgres.PostgresDatabase'
                 inputSchema = 'public'
                 excludes = 'flyway_schema_history'
             }
             generate {
-                pojos = true
-                pojosAsKotlinDataClasses = true
-                kotlinNotNullRecordAttributes = true
+                withPojos(true)
+                withKotlinNotNullRecordAttributes(true)
+                withKotlinNotNullPojoAttributes(true)
             }
             target {
                 packageName = 'com.bookmanagement.infrastructure.jooq'

@@ -4,9 +4,9 @@ import com.bookmanagement.app.domain.enums.PublishStatus
 import com.bookmanagement.app.dto.AuthorRequest
 import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookResponse
-import com.bookmanagement.infrastructure.jooq.tables.Authors.AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.BookAuthors.BOOK_AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.Books.BOOKS
+import com.bookmanagement.infrastructure.jooq.tables.references.AUTHORS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
