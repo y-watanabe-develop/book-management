@@ -21,12 +21,13 @@ class BookRepository(private val dsl: DSLContext) {
             .returning()
             .fetchOne()!!
 
-        request.authorIds.forEach { authorId ->
-            dsl.insertInto(BOOK_AUTHORS)
-                .set(BOOK_AUTHORS.BOOK_ID, bookRecord.id)
-                .set(BOOK_AUTHORS.AUTHOR_ID, authorId)
-                .execute()
-        }
+        dsl.batch(
+            request.authorIds.map { authorId ->
+                dsl.insertInto(BOOK_AUTHORS)
+                    .set(BOOK_AUTHORS.BOOK_ID, bookRecord.id)
+                    .set(BOOK_AUTHORS.AUTHOR_ID, authorId)
+            }
+        ).execute()
 
         return findByIdWithAuthors(bookRecord.id!!)!!
     }
@@ -44,12 +45,13 @@ class BookRepository(private val dsl: DSLContext) {
             .where(BOOK_AUTHORS.BOOK_ID.eq(id))
             .execute()
 
-        request.authorIds.forEach { authorId ->
-            dsl.insertInto(BOOK_AUTHORS)
-                .set(BOOK_AUTHORS.BOOK_ID, id)
-                .set(BOOK_AUTHORS.AUTHOR_ID, authorId)
-                .execute()
-        }
+        dsl.batch(
+            request.authorIds.map { authorId ->
+                dsl.insertInto(BOOK_AUTHORS)
+                    .set(BOOK_AUTHORS.BOOK_ID, id)
+                    .set(BOOK_AUTHORS.AUTHOR_ID, authorId)
+            }
+        ).execute()
 
         return findByIdWithAuthors(id)!!
     }
