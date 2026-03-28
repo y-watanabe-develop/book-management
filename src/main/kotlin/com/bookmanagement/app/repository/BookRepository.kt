@@ -5,8 +5,8 @@ import com.bookmanagement.app.dto.AuthorResponse
 import com.bookmanagement.app.dto.BookRequest
 import com.bookmanagement.app.dto.BookResponse
 import com.bookmanagement.infrastructure.jooq.tables.references.AUTHORS
-import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import com.bookmanagement.infrastructure.jooq.tables.references.BOOKS
+import com.bookmanagement.infrastructure.jooq.tables.references.BOOK_AUTHORS
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -62,7 +62,15 @@ class BookRepository(private val dsl: DSLContext) {
     }
 
     fun findAllWithAuthors(): List<BookResponse> =
-        dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+        dsl.select(
+            BOOKS.ID,
+            BOOKS.TITLE,
+            BOOKS.PRICE,
+            BOOKS.PUBLISH_STATUS,
+            AUTHORS.ID,
+            AUTHORS.NAME,
+            AUTHORS.BIRTH_DATE
+        )
             .from(BOOKS)
             .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
             .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
@@ -70,7 +78,15 @@ class BookRepository(private val dsl: DSLContext) {
             .toBookResponses()
 
     fun findByIdWithAuthors(id: Long): BookResponse? {
-        val records = dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+        val records = dsl.select(
+            BOOKS.ID,
+            BOOKS.TITLE,
+            BOOKS.PRICE,
+            BOOKS.PUBLISH_STATUS,
+            AUTHORS.ID,
+            AUTHORS.NAME,
+            AUTHORS.BIRTH_DATE
+        )
             .from(BOOKS)
             .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
             .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
@@ -85,17 +101,20 @@ class BookRepository(private val dsl: DSLContext) {
         val exists = dsl.fetchExists(dsl.selectFrom(AUTHORS).where(AUTHORS.ID.eq(authorId)))
         if (!exists) throw NoSuchElementException("Author not found: $authorId")
 
-        return dsl.select(BOOKS.ID, BOOKS.TITLE, BOOKS.PRICE, BOOKS.PUBLISH_STATUS, AUTHORS.ID, AUTHORS.NAME, AUTHORS.BIRTH_DATE)
+        val baFilter = BOOK_AUTHORS.`as`("ba_filter")
+        return dsl.select(
+            BOOKS.ID,
+            BOOKS.TITLE,
+            BOOKS.PRICE,
+            BOOKS.PUBLISH_STATUS,
+            AUTHORS.ID,
+            AUTHORS.NAME,
+            AUTHORS.BIRTH_DATE
+        )
             .from(BOOKS)
+            .join(baFilter).on(BOOKS.ID.eq(baFilter.BOOK_ID).and(baFilter.AUTHOR_ID.eq(authorId)))
             .join(BOOK_AUTHORS).on(BOOKS.ID.eq(BOOK_AUTHORS.BOOK_ID))
             .join(AUTHORS).on(AUTHORS.ID.eq(BOOK_AUTHORS.AUTHOR_ID))
-            .where(
-                BOOKS.ID.`in`(
-                    dsl.select(BOOK_AUTHORS.BOOK_ID)
-                        .from(BOOK_AUTHORS)
-                        .where(BOOK_AUTHORS.AUTHOR_ID.eq(authorId))
-                )
-            )
             .fetch()
             .toBookResponses()
     }
